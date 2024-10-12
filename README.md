@@ -1,2 +1,1 @@
-# my-rsc
- My own implementation of RSC
+# My own implementation of RSC
