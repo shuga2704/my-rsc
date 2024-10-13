@@ -21,8 +21,6 @@ function getRoute() {
 export default function Router() {
   const [page, setPage] = useState(getRoute());
 
-  console.log('page', page)
-
   useEffect(() => {
     const onChange = () => {
       setPage(getRoute());

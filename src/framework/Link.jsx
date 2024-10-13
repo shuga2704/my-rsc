@@ -20,7 +20,6 @@ export default function Link({
       const popStateEvent = new PopStateEvent("popstate", { state });
       dispatchEvent(popStateEvent);
 
-      console.log("click link", href);
       e.preventDefault();
     },
     [_onClick]

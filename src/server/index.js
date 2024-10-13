@@ -1,9 +1,12 @@
+import bodyParser from "body-parser";
 import express from "express";
 import path from "path";
 import getPosts from "./posts";
 
 const app = express();
 const port = 3000;
+
+app.use(bodyParser.json());
 
 // serve static files under public/
 app.use("/static", express.static(path.join(__dirname, "../../public")));
@@ -13,9 +16,24 @@ app.get("/api/posts", async (req, res) => {
   const list = await getPosts();
   res.json(list);
 });
-app.get("/api/post/:permalink", async (req, res) => {
-  const list = await getPosts();
-  res.json(list.filter((post) => post.permalink === req.params.permalink)[0]);
+
+app.post("/render", async (req, res) => {
+  const { component, props } = req.body;
+  const Component = require(path.join(
+      __dirname,
+      "../components/" + component + ".server.js"
+  )).default;
+
+  // assume all server components are async for now
+  const json = await Component(props);
+  const str = JSON.stringify(json, (k, v) => {
+    if (k === "$$typeof" && typeof v === "symbol") {
+      return v.toString();
+    }
+    return v;
+  });
+
+  res.send(str);
 });
 
 // serve built index.html

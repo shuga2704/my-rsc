@@ -22,11 +22,9 @@ const Posts = {
 export default function PostList() {
   const list = Posts.fetch();
 
-
   return (
     <ol>
       {list.map((post) => {
-        console.log('post', post)
         return <li>
           <Link href={`/post/${post.permalink}`}>{post.title}</Link>
         </li>
