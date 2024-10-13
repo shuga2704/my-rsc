@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import express from "express";
 import path from "path";
-import getPosts from "./posts";
+import serialize from "../framework/serialize";
 
 const app = express();
 const port = 3000;
@@ -11,14 +11,9 @@ app.use(bodyParser.json());
 // serve static files under public/
 app.use("/static", express.static(path.join(__dirname, "../../public")));
 
-// API exposed for client-side use
-app.get("/api/posts", async (req, res) => {
-  const list = await getPosts();
-  res.json(list);
-});
-
 app.post("/render", async (req, res) => {
   const { component, props } = req.body;
+
   const Component = require(path.join(
       __dirname,
       "../components/" + component + ".server.js"
@@ -26,12 +21,7 @@ app.post("/render", async (req, res) => {
 
   // assume all server components are async for now
   const json = await Component(props);
-  const str = JSON.stringify(json, (k, v) => {
-    if (k === "$$typeof" && typeof v === "symbol") {
-      return v.toString();
-    }
-    return v;
-  });
+  const str = serialize(json);
 
   res.send(str);
 });
