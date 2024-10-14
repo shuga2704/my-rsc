@@ -1,14 +1,16 @@
-import React, { Suspense } from "react";
-// import Link from "../framework/Link";
+'use client'
 
-import PostDetail from "./PostDetail.client";
+import React, { Suspense } from "react";
+import Link from "../framework/Link";
+
+import PostDetail from "./PostDetail";
 import Like from "./Like";
 
 export default function Detail({ permalink }) {
   return (
     <div>
       <p>
-        {/*<Link href="/">← post list</Link>*/}
+        <Link href="/">← post list</Link>
       </p>
       <Like />
       <Suspense fallback={<p>loading post...</p>}>
