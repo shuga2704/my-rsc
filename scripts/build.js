@@ -1,5 +1,4 @@
 const babel = require("@babel/core");
-const babelPlugin = require("@rollup/plugin-babel");
 const { rollup } = require("rollup");
 const { nodeResolve } = require("@rollup/plugin-node-resolve");
 const commonjs = require("@rollup/plugin-commonjs");
@@ -38,13 +37,10 @@ async function buildForClient() {
     const bundle = await rollup({
         input: [
             dir_built + "/index.js",
-            dir_built + "/components/Counter.js",
-            // dir_built + "/framework/LazyContainer.js",
-            // dir_built + "/framework/Link.js",
-            // ...[...serverComponents, ...clientComponents].map(
-            //     (component) =>
-            //         dir_built + "/components/" + component.fileName.split(".")[0] + ".js"
-            // ),
+            ...clientComponents.map(
+                (component) =>
+                    dir_built + "/components/" + component.fileName.split(".")[0] + ".js"
+            ),
         ],
         plugins: [
             replace({ "process.env.NODE_ENV": JSON.stringify("production") }),
@@ -54,7 +50,6 @@ async function buildForClient() {
                 title: "My RSC",
                 template: ({ attributes, files, meta, publicPath, title }) => {
                     const scripts = (files.js || [])
-                        // only load the vendor and entrypoint
                         .filter((file) => /react|index/.test(file.fileName))
                         .map(({ fileName }) => {
                             const attrs = makeHtmlAttributes(attributes.script);

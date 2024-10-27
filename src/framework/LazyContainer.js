@@ -1,19 +1,22 @@
 import React from "react";
+import withSuspense from './withSuspense'
 
-let Component = null
+let data = new Map()
 
 // Обертка для клиентских компонентов
-export default function LazyContainer({ name, ...rest }) {
-    if (Component) {
-        return <Component />
-    } else {
-        let promise = import("/Counter.js")
+function LazyContainer({ name }) {
+    const Component = data.get(name)
+
+    if (!Component) {
+        throw import((`/${name}.js`))
             .then(
                 (module) => {
-                    Component = module.default.Counter;
+                    data.set(name, module.default[name]);
                 }
             );
-
-        throw promise
     }
+
+    return <Component />
 }
+
+export default withSuspense(LazyContainer)

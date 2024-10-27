@@ -17,7 +17,6 @@ export default function render(jsx) {
         return jsx.map((item) => render(item));
     }
 
-    // react elements are what we want to handle
     if (jsx["$$typeof"] === Symbol.for("react.element")) {
         // if intrinsic html tag
         if (typeof jsx.type === "string") {
@@ -33,7 +32,7 @@ export default function render(jsx) {
                     ...jsx,
                     props: {
                         ...render(jsx.props),
-                        componentName: jsx.type.name,
+                        name: jsx.type.name,
                     },
                     type: "$LazyContainer",
                 };
