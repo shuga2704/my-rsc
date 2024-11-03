@@ -4,6 +4,7 @@ const path = require("path")
 const serialize = require("./serialize").default
 
 import renderServerComponent from './renderServerComponent'
+import renderToPipeableStream from "./renderToPipeableStream";
 
 const app = express()
 const PORT = 4001
@@ -33,8 +34,6 @@ app.get("/payload", async (req, res) => {
 
 // Рендер асинхронных серверных компонентов
 app.get('/getAsyncServerComponent/:name', async (req, res) => {
-    console.log('req', req.params.name)
-
     const Component = require(path.join(
         __dirname,
         `../components/${req.params.name}.js`
@@ -46,6 +45,12 @@ app.get('/getAsyncServerComponent/:name', async (req, res) => {
 
     res.send(str);
 })
+
+app.get("/stream", async (req, res) => {
+    const json = await ReactApp();
+
+    renderToPipeableStream(json, res);
+});
 
 app.listen(PORT, () => {
     console.log(`App is live at http://localhost:${PORT}`);
