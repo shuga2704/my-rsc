@@ -1,20 +1,18 @@
-import React, { Suspense } from 'react'
-import ServerComponentAsync2 from './ServerComponentAsync2'
+import React from 'react'
+import InnerServerComponentAsync from './InnerServerComponentAsync'
 
 export default async function ServerComponentAsync() {
     await new Promise((res) => {
-        setTimeout(res, 1000);
+        setTimeout(res, 2000);
     });
 
     return (
         <div>
-            ServerComponentAsync
+            Асинхронный рендер на сервере
 
-            <br />
-
-            <Suspense fallback="async 2 loading...">
-                <ServerComponentAsync2 />
-            </Suspense>
+            <div className="server-async">
+                <InnerServerComponentAsync />
+            </div>
         </div>
     );
 }

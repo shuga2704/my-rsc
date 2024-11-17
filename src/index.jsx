@@ -28,6 +28,8 @@ fetch("/stream").then((res) => {
 
             promiseMap.set(payload.target, payload.data)
 
+            console.log('payload', payload)
+
             read();
         });
     };

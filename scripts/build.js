@@ -11,7 +11,6 @@ const dir_src = path.resolve(__dirname + "/../src/");
 const dir_built = path.resolve(__dirname + "/../built/");
 const dir_public = path.resolve(__dirname + "/../public/");
 const dir_components_src = path.resolve(__dirname + "/../src/components/");
-const dir_components_built = path.resolve(__dirname + "/../built/components/");
 
 // Транспилируем исходники
 function transpile() {
@@ -32,7 +31,7 @@ function transpile() {
 }
 
 async function buildForClient() {
-    const { serverComponents, clientComponents } = await readAllComponents();
+    const { clientComponents } = await readAllComponents();
 
     const bundle = await rollup({
         input: [
@@ -72,10 +71,19 @@ async function buildForClient() {
                           * {
                             font-family: sans-serif;
                           }
-                          #root {
+                          .main {
                             padding: 1rem;
-                            background-color: #eee;
-                            margin-top: 1rem;
+                            background: #b6ffba;
+                          }
+                          .client {
+                            padding: 1rem;
+                            margin: 1rem;
+                            background: #ff000087;
+                          }
+                          .server-async {
+                            padding: 1rem;
+                            margin: 1rem;
+                            background: #5b5bff80;
                           }
                           </style>
                             ${metas}
@@ -104,15 +112,12 @@ async function buildForClient() {
 
 // Карта компонентов
 async function generateComponentMap() {
-    const { serverComponents, clientComponents } = await readAllComponents();
+    const { clientComponents } = await readAllComponents();
 
     writeFileSync(
         dir_built + "/utils/componentMap.js",
         `
                     module.exports =  {
-                        serverComponents: [${serverComponents
-                            .map((file) => `"${file.fileName.split(".")[0]}"`)
-                            .join(",")}],
                         clientComponents: [${clientComponents
                             .map((file) => `"${file.fileName.split(".")[0]}"`)
                             .join(",")}, "LazyContainer"],
@@ -209,7 +214,6 @@ async function readAllComponents() {
         });
     });
 
-    const serverComponents = [];
     const clientComponents = [];
 
     allComponents.forEach((file) => {
@@ -222,16 +226,10 @@ async function readAllComponents() {
                 fileName: file,
                 content,
             });
-        } else {
-            serverComponents.push({
-                fileName: file,
-                content,
-            });
         }
     });
 
     return {
-        serverComponents,
         clientComponents,
     };
 }

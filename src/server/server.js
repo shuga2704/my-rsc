@@ -1,9 +1,7 @@
-const express = require("express")
-const { readFileSync } = require("fs")
-const path = require("path")
-const serialize = require("./serialize").default
+import express from 'express'
+import { readFileSync } from 'fs'
+import path from 'path'
 
-import renderServerComponent from './renderServerComponent'
 import renderToPipeableStream from "./renderToPipeableStream";
 
 const app = express()
@@ -22,29 +20,6 @@ const ReactApp = require(path.join(
     __dirname,
     "../App.js"
 )).default
-
-// Возвращаем на клиент отрендеренные компоненты в виде сериализованного json.
-app.get("/payload", async (req, res) => {
-    const json = await ReactApp();
-
-    const str = serialize(renderServerComponent(json));
-
-    res.send(str);
-})
-
-// Рендер асинхронных серверных компонентов
-app.get('/getAsyncServerComponent/:name', async (req, res) => {
-    const Component = require(path.join(
-        __dirname,
-        `../components/${req.params.name}.js`
-    )).default
-
-    const json = await Component();
-
-    const str = serialize(renderServerComponent(json));
-
-    res.send(str);
-})
 
 app.get("/stream", async (req, res) => {
     const json = await ReactApp();

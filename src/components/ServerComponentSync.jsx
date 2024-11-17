@@ -3,7 +3,7 @@ import React from 'react'
 export default function ServerComponentSync() {
     return (
         <div>
-            ServerComponentSync
+            И это тоже пришло с сервера
         </div>
     );
 }

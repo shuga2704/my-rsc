@@ -6,18 +6,18 @@ import ServerComponentAsync from './components/ServerComponentAsync'
 
 export default function App() {
     return <div className="main">
-        some text
+        Это отрендерилось на сервере
 
-        <Suspense fallback="Loading client component...">
-            <Counter />
-        </Suspense>
+        <div className="client">
+            <Suspense fallback="Загружаем клиентский компонент...">
+                <Counter />
+            </Suspense>
+        </div>
 
         <ServerComponentSync />
 
-        <br />
-
-        <Suspense fallback="Loading async server comp...">
+        <div className="server-async">
             <ServerComponentAsync />
-        </Suspense>
+        </div>
     </div>;
 }
