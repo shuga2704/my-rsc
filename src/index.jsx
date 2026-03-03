@@ -1,34 +1,54 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React, { Suspense } from "react";
+import { createRoot } from 'react-dom/client';
 import { deserialize } from './framework/deserialize'
 import { createPromise } from './utils'
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<Root />);
-
 // Создаем коллекцию для хранения промисов и (в результате) их компонентов.
 export const promiseMap = new Map()
+
+createRoot(document.getElementById('root')).render(
+    <Suspense fallback={null}>
+        <Root />
+    </Suspense>
+);
 
 // Начинаем порционно получать отрендеренные компоненты с сервера в режиме стриминга.
 // Запрос выполниться только когда придет последний компонент.
 fetch("/stream").then((res) => {
     const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    const processPayload = (chunk) => {
+        if (!chunk) return;
+
+        const payload = deserialize(chunk);
+        const promiseFromTarget = promiseMap.get(payload.target)
+
+        promiseMap.set(payload.target, payload.data)
+
+        if (promiseFromTarget instanceof Promise) {
+            promiseFromTarget.resolve()
+        }
+
+        console.log('payload', payload)
+    };
 
     const read = () => {
         reader.read().then(({ done, value }) => {
-            if (done) return
+            if (done) {
+                processPayload(buffer.trim())
+                return
+            }
 
-            const decoder = new TextDecoder();
+            buffer += decoder.decode(value, { stream: true });
 
-            const payload = deserialize(decoder.decode(value));
+            const payloads = buffer.split("\n");
+            buffer = payloads.pop() || "";
 
-            const promiseFromTarget = promiseMap.get(payload.target)
-
-            promiseFromTarget.resolve()
-
-            promiseMap.set(payload.target, payload.data)
-
-            console.log('payload', payload)
+            payloads.forEach((chunk) => {
+                processPayload(chunk.trim())
+            })
 
             read();
         });

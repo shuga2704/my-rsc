@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import styled from 'styled-components';
+
+const Button = styled.button`
+    background: lightsalmon;
+    padding: 10px;
+`
 
 export function Counter() {
     const [count, setCount] = useState(0);
@@ -11,5 +17,5 @@ export function Counter() {
 
     useEffect(() => {}, [])
 
-    return <button onClick={increment}>Counter: {count}</button>
+    return <Button onClick={increment}>Counter: {count}</Button>
 }

@@ -11,5 +11,5 @@ export default function serialize(json) {
         }
 
         return v;
-    });
+    }) + "\n";
 }

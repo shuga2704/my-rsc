@@ -1,8 +1,9 @@
 import componentMap from "../../built/utils/componentMap";
 import serialize from "./serialize";
+import { isReactElement, isStyledComponent, mergeClassNames, createStyledStyleElement } from '../utils'
 
 function render(jsx, context) {
-    if (jsx === null) {
+    if (jsx == null || typeof jsx === "boolean") {
         return null;
     }
 
@@ -18,10 +19,45 @@ function render(jsx, context) {
         return jsx.map((item) => render(item, context));
     }
 
-    if (jsx["$$typeof"] === Symbol.for("react.element")) {
+    if (isReactElement(jsx)) {
+        console.log('jsx', jsx);
         // Является ли элемент html-тегом
         if (typeof jsx.type === "string") {
             return { ...jsx, props: render(jsx.props, context) };
+        }
+
+        if (typeof jsx.type === "symbol") {
+            return { ...jsx, props: render(jsx.props, context) };
+        }
+
+        // Styled-components в React 19 приходят как forwardRef-объекты.
+        // Для этого проекта достаточно развернуть их обратно в обычный тег.
+        if (isStyledComponent(jsx.type)) {
+            const renderedElement = render({
+                ...jsx,
+                type: jsx.type.target,
+                props: {
+                    ...jsx.props,
+                    className: mergeClassNames(
+                        jsx.props?.className,
+                        jsx.type.styledComponentId,
+                    ),
+                },
+            }, context);
+
+            if (context.styled.has(jsx.type.styledComponentId)) {
+                return renderedElement;
+            }
+
+            context.styled.add(jsx.type.styledComponentId);
+
+            const styleElement = createStyledStyleElement(jsx.type, jsx);
+
+            if (!styleElement) {
+                return renderedElement;
+            }
+
+            return [styleElement, renderedElement];
         }
 
         // Или функциональным компонентом
@@ -80,6 +116,7 @@ function render(jsx, context) {
 export default function renderToPipeableStream(jsx, res) {
     const context = {
         id: 0,
+        styled: new Set(),
         tasks: new Set(),
     };
 

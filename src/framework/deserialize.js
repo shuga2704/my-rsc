@@ -9,6 +9,10 @@ export function deserialize(str) {
                 return Symbol.for("react.element");
             }
 
+            if (value === "Symbol(react.transitional.element)") {
+                return Symbol.for("react.transitional.element");
+            }
+
             throw new Error("unexpected $$typeof", value);
         }
 
