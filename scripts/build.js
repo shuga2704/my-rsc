@@ -67,25 +67,6 @@ async function buildForClient() {
                         <!doctype html>
                         <html${makeHtmlAttributes(attributes.html)}>
                           <head>
-                          <style>
-                          * {
-                            font-family: sans-serif;
-                          }
-                          .main {
-                            padding: 1rem;
-                            background: #b6ffba;
-                          }
-                          .client {
-                            padding: 1rem;
-                            margin: 1rem;
-                            background: #ff000087;
-                          }
-                          .server-async {
-                            padding: 1rem;
-                            margin: 1rem;
-                            background: #5b5bff80;
-                          }
-                          </style>
                             ${metas}
                             <title>${title}</title>
                           </head>

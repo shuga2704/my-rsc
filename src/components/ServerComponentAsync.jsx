@@ -1,5 +1,6 @@
 import React from 'react'
 import InnerServerComponentAsync from './InnerServerComponentAsync'
+import { ServerAsync } from '../App'
 
 export default async function ServerComponentAsync() {
     await new Promise((res) => {
@@ -10,9 +11,9 @@ export default async function ServerComponentAsync() {
         <div>
             Асинхронный рендер на сервере
 
-            <div className="server-async">
+            <ServerAsync>
                 <InnerServerComponentAsync />
-            </div>
+            </ServerAsync>
         </div>
     );
 }
