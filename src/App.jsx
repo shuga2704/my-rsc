@@ -24,7 +24,7 @@ export default function App() {
         <ServerComponentSync />
 
         <div className="server-async">
-            {/*<ServerComponentAsync />*/}
+            <ServerComponentAsync />
         </div>
     </div>;
 }

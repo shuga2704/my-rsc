@@ -68,7 +68,7 @@ function Root() {
         throw promise
     } else {
         if (component instanceof Promise) {
-            return null
+            throw component
         } else {
             return component
         }

@@ -10,9 +10,9 @@ export default async function ServerComponentAsync() {
         <div>
             Асинхронный рендер на сервере
 
-            {/*<div className="server-async">*/}
-            {/*    <InnerServerComponentAsync />*/}
-            {/*</div>*/}
+            <div className="server-async">
+                <InnerServerComponentAsync />
+            </div>
         </div>
     );
 }

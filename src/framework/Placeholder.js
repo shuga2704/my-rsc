@@ -15,7 +15,7 @@ function Placeholder({ id }) {
         throw promise
     } else {
         if (component instanceof Promise) {
-            return null
+            throw component
         } else {
             return component
         }

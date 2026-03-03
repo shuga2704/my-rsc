@@ -20,7 +20,6 @@ function render(jsx, context) {
     }
 
     if (isReactElement(jsx)) {
-        console.log('jsx', jsx);
         // Является ли элемент html-тегом
         if (typeof jsx.type === "string") {
             return { ...jsx, props: render(jsx.props, context) };
@@ -78,7 +77,7 @@ function render(jsx, context) {
                 const id = "C:" + context.id++;
 
                 // Если серверный компонент - асинхронный
-                if ("then" in rendered) {
+                if (rendered != null && typeof rendered.then === "function") {
                     context.tasks.add(rendered);
 
                     rendered.then((json) => {
@@ -92,13 +91,16 @@ function render(jsx, context) {
 
                     // Возвращаем заглушку для асинхронного компонента
                     return {
-                        $$typeof: Symbol.for("react.element"),
+                        $$typeof: jsx.$$typeof,
                         type: "$Placeholder",
+                        key: jsx.key ?? null,
                         props: {
                             id,
                             name: jsx.type.name
                         },
                         ref: null,
+                        _owner: null,
+                        _store: {},
                     };
                 } else { // Если серверный компонент синхронный
                     return render(rendered, context);
